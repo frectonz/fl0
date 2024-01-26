@@ -19,6 +19,7 @@
       with pkgs; {
         devShells.default = mkShell {
           packages = [
+            biome
             nodejs
             nodePackages.pnpm
             nodePackages.typescript
