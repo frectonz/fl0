@@ -12,12 +12,14 @@
     "release": "pnpm run build && changeset publish",
     "lint": "tsc",
     "lint:biome": "biome lint .",
-    "format": "biome format . --write"
+    "format": "biome format . --write",
+    "test": "vitest"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
     "tsup": "^8.0.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.1"
   },
   "publishConfig": {
     "access": "public"
