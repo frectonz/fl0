@@ -1,6 +1,6 @@
 # fl0
 
-An incremental computaion library.
+An incremental computation library.
 
 ```typescript
 const count = fl0.var(0);
