@@ -10,6 +10,15 @@ class Var<T> {
     this.value = initialValue;
   }
 
+  peek(): T {
+    return this.value;
+  }
+
+  set(value: T) {
+    this.value = value;
+    this.notifyObservers();
+  }
+
   update(updateFn: UpdateFn<T>): void {
     const newValue = updateFn(this.value);
     if (newValue !== this.value) {

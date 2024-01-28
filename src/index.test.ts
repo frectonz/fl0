@@ -56,3 +56,20 @@ test("update a mapped var", () => {
 
   expect(starValues).toEqual(["", "CATS"]);
 });
+
+test("peek a value", () => {
+  const count = fl0.var(0);
+
+  expect(count.peek()).toBe(0);
+});
+
+test("set a value", () => {
+  const count = fl0.var(0);
+  count.set(69);
+
+  const countValues: number[] = [];
+  count.observe((newCount) => countValues.push(newCount));
+
+  expect(count.peek()).toBe(69);
+  expect(countValues).toEqual([69]);
+});
