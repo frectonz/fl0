@@ -1,5 +1,11 @@
 # fl0
 
+## 0.0.5
+
+### Patch Changes
+
+- 721126a: implement `peek` and `set`
+
 ## 0.0.4
 
 ### Patch Changes

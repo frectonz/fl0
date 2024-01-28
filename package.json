@@ -1,6 +1,6 @@
 {
   "name": "fl0",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "An incremental computation library.",
   "license": "MIT",
   "author": "frectonz",
