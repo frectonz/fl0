@@ -73,3 +73,21 @@ test("set a value", () => {
   expect(count.peek()).toBe(69);
   expect(countValues).toEqual([69]);
 });
+
+test("combine two vars", () => {
+  const count1 = fl0.var(0);
+  const count2 = fl0.var(0);
+
+  const combined = count1.combine(count2).map(([c1, c2]) => c1 * c2);
+
+  const countValues: number[] = [];
+  combined.observe((sum) => countValues.push(sum));
+
+  expect(countValues).toEqual([0]);
+
+  count1.set(10);
+  expect(countValues).toEqual([0, 0]);
+
+  count2.set(10);
+  expect(countValues).toEqual([0, 0, 100]);
+});

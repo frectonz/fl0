@@ -21,10 +21,8 @@ class Var<T> {
 
   update(updateFn: UpdateFn<T>): void {
     const newValue = updateFn(this.value);
-    if (newValue !== this.value) {
-      this.value = newValue;
-      this.notifyObservers();
-    }
+    this.value = newValue;
+    this.notifyObservers();
   }
 
   observe(observer: Observer<T>): void {
@@ -40,6 +38,21 @@ class Var<T> {
     });
 
     return mappedVar;
+  }
+
+  combine<U>(other: Var<U>): Var<[T, U]> {
+    const pair: [T, U] = [this.value, other.peek()];
+    const combined = new Var(pair);
+
+    this.observe((val) => {
+      combined.update(([_, o]) => [val, o]);
+    });
+
+    other.observe((val) => {
+      combined.update(([t, _]) => [t, val]);
+    });
+
+    return combined;
   }
 
   private notifyObservers(): void {
