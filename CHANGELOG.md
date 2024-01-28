@@ -1,5 +1,11 @@
 # fl0
 
+## 0.0.6
+
+### Patch Changes
+
+- c2f002d: implement two vars with `combine`
+
 ## 0.0.5
 
 ### Patch Changes
