@@ -44,3 +44,15 @@ test("a var with a map", () => {
   expect(countValues).toEqual([0, 1, 10]);
   expect(starValues).toEqual(["", "*", "*".repeat(10)]);
 });
+
+test("update a mapped var", () => {
+  const count = fl0.var(0);
+  const stars = count.map((c) => "*".repeat(c));
+
+  const starValues: string[] = [];
+
+  stars.observe((newStars) => starValues.push(newStars));
+  stars.update((_) => "CATS");
+
+  expect(starValues).toEqual(["", "CATS"]);
+});
