@@ -4,10 +4,11 @@ type UpdateFn<T> = (value: T) => T;
 
 class Var<T> {
   private value: T;
-  private observers: Observer<T>[] = [];
+  private dependents: Observable<T>[];
 
-  constructor(initialValue: T) {
-    this.value = initialValue;
+  constructor(init: T) {
+    this.value = init;
+    this.dependents = [];
   }
 
   peek(): T {
@@ -16,13 +17,43 @@ class Var<T> {
 
   set(value: T) {
     this.value = value;
-    this.notifyObservers();
+    this.notifyDependats();
   }
 
   update(updateFn: UpdateFn<T>): void {
-    const newValue = updateFn(this.value);
-    this.value = newValue;
+    this.set(updateFn(this.peek()));
+  }
+
+  get(): Observable<T> {
+    const observable = new Observable(this.value);
+    this.dependents.push(observable);
+    return observable;
+  }
+
+  private notifyDependats(): void {
+    for (const dependant of this.dependents) {
+      dependant.push(this.value);
+    }
+  }
+}
+
+class Observable<T> {
+  private value: T;
+  private observers: Observer<T>[] = [];
+
+  constructor(initialValue: T) {
+    this.value = initialValue;
+  }
+
+  push(value: T) {
+    this.value = value;
     this.notifyObservers();
+  }
+
+  private notifyObservers(): void {
+    for (const observer of this.observers) {
+      observer(this.value);
+    }
   }
 
   observe(observer: Observer<T>): void {
@@ -30,35 +61,31 @@ class Var<T> {
     observer(this.value);
   }
 
-  map<U>(mapFn: MapFn<T, U>): Var<U> {
-    const mappedVar = new Var(mapFn(this.value));
+  map<U>(mapFn: MapFn<T, U>): Observable<U> {
+    const mappedVar = new Observable(mapFn(this.value));
 
     this.observe((value: T) => {
-      mappedVar.update(() => mapFn(value));
+      mappedVar.push(mapFn(value));
     });
 
     return mappedVar;
   }
 
-  combine<U>(other: Var<U>): Var<[T, U]> {
-    const pair: [T, U] = [this.value, other.peek()];
-    const combined = new Var(pair);
+  combine<U>(other: Observable<U>): Observable<[T, U]> {
+    const pair: [T, U] = [this.value, other.value];
+    const combined = new Observable(pair);
 
     this.observe((val) => {
-      combined.update(([_, o]) => [val, o]);
+      const pair: [T, U] = [val, combined.value[1]];
+      combined.push(pair);
     });
 
     other.observe((val) => {
-      combined.update(([t, _]) => [t, val]);
+      const pair: [T, U] = [combined.value[0], val];
+      combined.push(pair);
     });
 
     return combined;
-  }
-
-  private notifyObservers(): void {
-    for (const observer of this.observers) {
-      observer(this.value);
-    }
   }
 }
 

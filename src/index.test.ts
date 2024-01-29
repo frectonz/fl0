@@ -5,7 +5,7 @@ test("simple var", () => {
   const count = fl0.var(0);
   const values: number[] = [];
 
-  count.observe((newCount) => values.push(newCount));
+  count.get().observe(c => values.push(c));
 
   expect(values).toEqual([0]);
 });
@@ -14,7 +14,7 @@ test("an updated var", () => {
   const count = fl0.var(0);
   const values: number[] = [];
 
-  count.observe((newCount) => values.push(newCount));
+  count.get().observe(c => values.push(c));
 
   count.update((old) => old + 1);
 
@@ -23,12 +23,12 @@ test("an updated var", () => {
 
 test("a var with a map", () => {
   const count = fl0.var(0);
-  const stars = count.map((c) => "*".repeat(c));
+  const stars = count.get().map((c) => "*".repeat(c));
 
   const countValues: number[] = [];
   const starValues: string[] = [];
 
-  count.observe((newCount) => countValues.push(newCount));
+  count.get().observe((newCount) => countValues.push(newCount));
   stars.observe((newStars) => starValues.push(newStars));
 
   expect(countValues).toEqual([0]);
@@ -47,12 +47,12 @@ test("a var with a map", () => {
 
 test("update a mapped var", () => {
   const count = fl0.var(0);
-  const stars = count.map((c) => "*".repeat(c));
+  const stars = count.get().map((c) => "*".repeat(c));
 
   const starValues: string[] = [];
 
   stars.observe((newStars) => starValues.push(newStars));
-  stars.update((_) => "CATS");
+  stars.push("CATS");
 
   expect(starValues).toEqual(["", "CATS"]);
 });
@@ -68,7 +68,7 @@ test("set a value", () => {
   count.set(69);
 
   const countValues: number[] = [];
-  count.observe((newCount) => countValues.push(newCount));
+  count.get().observe((newCount) => countValues.push(newCount));
 
   expect(count.peek()).toBe(69);
   expect(countValues).toEqual([69]);
@@ -78,7 +78,10 @@ test("combine two vars", () => {
   const count1 = fl0.var(0);
   const count2 = fl0.var(0);
 
-  const combined = count1.combine(count2).map(([c1, c2]) => c1 * c2);
+  const combined = count1
+    .get()
+    .combine(count2.get())
+    .map(([c1, c2]) => c1 * c2);
 
   const countValues: number[] = [];
   combined.observe((sum) => countValues.push(sum));
