@@ -25,23 +25,23 @@ test("a var with a map", () => {
   const count = fl0.var(0);
   const stars = count.get().map((c) => "*".repeat(c));
 
-  const countValues: number[] = [];
+  const values: number[] = [];
   const starValues: string[] = [];
 
-  count.get().observe((newCount) => countValues.push(newCount));
+  count.get().observe((newCount) => values.push(newCount));
   stars.observe((newStars) => starValues.push(newStars));
 
-  expect(countValues).toEqual([0]);
+  expect(values).toEqual([0]);
   expect(starValues).toEqual([""]);
 
   count.update((old) => old + 1);
 
-  expect(countValues).toEqual([0, 1]);
+  expect(values).toEqual([0, 1]);
   expect(starValues).toEqual(["", "*"]);
 
   count.update((old) => old * 10);
 
-  expect(countValues).toEqual([0, 1, 10]);
+  expect(values).toEqual([0, 1, 10]);
   expect(starValues).toEqual(["", "*", "*".repeat(10)]);
 });
 
@@ -67,11 +67,11 @@ test("set a value", () => {
   const count = fl0.var(0);
   count.set(69);
 
-  const countValues: number[] = [];
-  count.get().observe((newCount) => countValues.push(newCount));
+  const values: number[] = [];
+  count.get().observe((count) => values.push(count));
 
+  expect(values).toEqual([69]);
   expect(count.peek()).toBe(69);
-  expect(countValues).toEqual([69]);
 });
 
 test("combine two vars", () => {
@@ -83,14 +83,14 @@ test("combine two vars", () => {
     .combine(count2.get())
     .map(([c1, c2]) => c1 * c2);
 
-  const countValues: number[] = [];
-  combined.observe((sum) => countValues.push(sum));
+  const values: number[] = [];
+  combined.observe((product) => values.push(product));
 
-  expect(countValues).toEqual([0]);
+  expect(values).toEqual([0]);
 
   count1.set(10);
-  expect(countValues).toEqual([0, 0]);
+  expect(values).toEqual([0, 0]);
 
   count2.set(10);
-  expect(countValues).toEqual([0, 0, 100]);
+  expect(values).toEqual([0, 0, 100]);
 });
