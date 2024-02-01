@@ -4,7 +4,7 @@ An incremental computation library.
 
 ```typescript
 const count = fl0.var(0);
-const stars = count.map(count => "*".repeat(count));
+const stars = count.get().map(count => "*".repeat(count));
 
 const countElm = document.querySelector("#count")!;
 const inc = document.querySelector("#inc")!;
