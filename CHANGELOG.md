@@ -1,5 +1,11 @@
 # fl0
 
+## 0.0.7
+
+### Patch Changes
+
+- 5870661: separate the idea of `vars` from `observables`
+
 ## 0.0.6
 
 ### Patch Changes
