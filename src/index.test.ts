@@ -5,7 +5,7 @@ test("simple var", () => {
   const count = fl0.var(0);
   const values: number[] = [];
 
-  count.get().observe(c => values.push(c));
+  count.get().observe((c) => values.push(c));
 
   expect(values).toEqual([0]);
 });
@@ -14,7 +14,7 @@ test("an updated var", () => {
   const count = fl0.var(0);
   const values: number[] = [];
 
-  count.get().observe(c => values.push(c));
+  count.get().observe((c) => values.push(c));
 
   count.update((old) => old + 1);
 

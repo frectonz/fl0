@@ -4,11 +4,11 @@ type UpdateFn<T> = (value: T) => T;
 
 class Var<T> {
   private value: T;
-  private dependents: Observable<T>[];
+  private observers: Observable<T>[];
 
   constructor(init: T) {
     this.value = init;
-    this.dependents = [];
+    this.observers = [];
   }
 
   peek(): T {
@@ -17,7 +17,7 @@ class Var<T> {
 
   set(value: T) {
     this.value = value;
-    this.notifyDependats();
+    this.notifyObservers();
   }
 
   update(updateFn: UpdateFn<T>): void {
@@ -26,12 +26,12 @@ class Var<T> {
 
   get(): Observable<T> {
     const observable = new Observable(this.value);
-    this.dependents.push(observable);
+    this.observers.push(observable);
     return observable;
   }
 
-  private notifyDependats(): void {
-    for (const dependant of this.dependents) {
+  private notifyObservers(): void {
+    for (const dependant of this.observers) {
       dependant.push(this.value);
     }
   }
