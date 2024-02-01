@@ -94,3 +94,17 @@ test("combine two vars", () => {
   count2.set(10);
   expect(values).toEqual([0, 0, 100]);
 });
+
+test("throwing observer", () => {
+  const count = fl0.var(0);
+
+  const values: number[] = [];
+  count.get().observe((_) => {
+    throw new Error("oops");
+  });
+  count.get().observe((num) => values.push(num));
+
+  count.update((num) => num + 1);
+
+  expect(values).toEqual([0, 1]);
+});

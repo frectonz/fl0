@@ -52,13 +52,17 @@ class Observable<T> {
 
   private notifyObservers(): void {
     for (const observer of this.observers) {
-      observer(this.value);
+      try {
+        observer(this.value);
+      } catch {}
     }
   }
 
   observe(observer: Observer<T>): void {
     this.observers.push(observer);
-    observer(this.value);
+    try {
+      observer(this.value);
+    } catch {}
   }
 
   map<U>(mapFn: MapFn<T, U>): Observable<U> {
