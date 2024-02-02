@@ -1,5 +1,11 @@
 # fl0
 
+## 0.0.8
+
+### Patch Changes
+
+- 9d67ab8: sugar for combining vars and implement detaching observers
+
 ## 0.0.7
 
 ### Patch Changes
