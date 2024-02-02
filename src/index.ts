@@ -97,4 +97,7 @@ export default {
   var<T>(init: T) {
     return new Var(init);
   },
+  combine<T, U>(first: Var<T>, second: Var<U>) {
+    return first.get().combine(second.get());
+  },
 };
