@@ -25,7 +25,9 @@ class Var<T> {
   }
 
   get(): Observable<T> {
-    const observable = new Observable(this.value);
+    const observable = new Observable(this.value, () =>
+      this.observers.splice(this.observers.length - 1, 1),
+    );
     this.observers.push(observable);
     return observable;
   }
@@ -40,9 +42,11 @@ class Var<T> {
 class Observable<T> {
   private value: T;
   private observers: Observer<T>[] = [];
+  private detacher: () => void;
 
-  constructor(initialValue: T) {
-    this.value = initialValue;
+  constructor(init: T, detacher: () => void) {
+    this.value = init;
+    this.detacher = detacher;
   }
 
   push(value: T) {
@@ -66,7 +70,7 @@ class Observable<T> {
   }
 
   map<U>(mapFn: MapFn<T, U>): Observable<U> {
-    const mappedVar = new Observable(mapFn(this.value));
+    const mappedVar = new Observable(mapFn(this.value), () => this.detach());
 
     this.observe((value: T) => {
       mappedVar.push(mapFn(value));
@@ -77,7 +81,10 @@ class Observable<T> {
 
   combine<U>(other: Observable<U>): Observable<[T, U]> {
     const pair: [T, U] = [this.value, other.value];
-    const combined = new Observable(pair);
+    const combined = new Observable(pair, () => {
+      this.detach();
+      other.detach();
+    });
 
     this.observe((val) => {
       const pair: [T, U] = [val, combined.value[1]];
@@ -90,6 +97,10 @@ class Observable<T> {
     });
 
     return combined;
+  }
+
+  detach() {
+    this.detacher();
   }
 }
 
