@@ -25,6 +25,8 @@
             nodePackages.typescript
             nodePackages.typescript-language-server
           ];
+
+          shellHook = "pnpm install";
         };
 
         formatter = nixpkgs-fmt;
