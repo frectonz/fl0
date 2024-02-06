@@ -191,3 +191,50 @@ test("detach a combined observer", () => {
   count2.set(20);
   expect(value).toBe(13);
 });
+
+test("observers are only updated for new values", () => {
+  const count = fl0.var(69);
+
+  let called = 0;
+  count.get().observe(() => {
+    called += 1;
+  });
+
+  expect(called).toBe(1);
+
+  count.set(69);
+
+  expect(called).toBe(1);
+});
+
+test("new values check can be disabled", () => {
+  const count = fl0.var(69, { equals: false });
+
+  let called = 0;
+  count.get().observe(() => {
+    called += 1;
+  });
+
+  expect(called).toBe(1);
+
+  count.set(69);
+
+  expect(called).toBe(2);
+});
+
+test("equality checker can be customized", () => {
+  const count = fl0.var("a", { equals: (a, b) => a.length === b.length });
+
+  let called = 0;
+  count.get().observe(() => {
+    called += 1;
+  });
+
+  expect(called).toBe(1);
+
+  count.set("b");
+  expect(called).toBe(1);
+
+  count.set("bb");
+  expect(called).toBe(2);
+});

@@ -1,14 +1,29 @@
 type Observer<T> = (value: T) => void;
 type MapFn<T, U> = (value: T) => U;
 type UpdateFn<T> = (value: T) => T;
+type Options<T> = { equals?: false | ((prev: T, next: T) => boolean) };
 
 class Var<T> {
   private value: T;
   private observers: Observable<T>[];
 
-  constructor(init: T) {
+  private checkEquality: boolean;
+  private equalityCheck: (prev: T, next: T) => boolean;
+
+  constructor(init: T, options?: Options<T>) {
     this.value = init;
     this.observers = [];
+
+    this.checkEquality = true;
+    this.equalityCheck = (a, b) => a == b;
+
+    if (options) {
+      if (typeof options.equals === "boolean") {
+        this.checkEquality = options.equals;
+      } else if (typeof options.equals === "function") {
+        this.equalityCheck = options.equals;
+      }
+    }
   }
 
   peek(): T {
@@ -16,6 +31,10 @@ class Var<T> {
   }
 
   set(value: T) {
+    if (this.checkEquality && this.equalityCheck(this.value, value)) {
+      return;
+    }
+
     this.value = value;
     this.notifyObservers();
   }
@@ -105,8 +124,8 @@ class Observable<T> {
 }
 
 export default {
-  var<T>(init: T) {
-    return new Var(init);
+  var<T>(init: T, options?: Options<T>) {
+    return new Var(init, options);
   },
   combine<T, U>(first: Var<T>, second: Var<U>) {
     return first.get().combine(second.get());
